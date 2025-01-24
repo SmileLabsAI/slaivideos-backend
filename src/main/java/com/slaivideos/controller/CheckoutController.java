@@ -14,29 +14,26 @@ import java.math.BigDecimal;
 import java.util.Collections;
 
 @RestController
-@RequestMapping("/api/checkout")
+@RequestMapping("/api/payment")
+@CrossOrigin(origins = "*") // Permitir chamadas de qualquer origem
 public class CheckoutController {
 
+    // Carrega a credencial do Mercado Pago do application.properties
     @Value("${mercadopago.access-token}")
-    private String mercadoPagoAccessToken;
+    private String accessToken;
 
-    @PostMapping("/create_preference")
-    public ResponseEntity<?> createPreference(@RequestBody CheckoutRequest checkoutRequest) {
+    @PostMapping("/checkout")
+    public ResponseEntity<?> createPreference(@RequestBody CheckoutRequest request) {
         try {
-            // Configura o Mercado Pago
-            MercadoPagoConfig.setAccessToken(mercadoPagoAccessToken);
+            // Configura o SDK do Mercado Pago com o Access Token
+            MercadoPagoConfig.setAccessToken(accessToken);
 
-            // Verifica se os dados são válidos
-            if (checkoutRequest.getTitle() == null || checkoutRequest.getPrice() <= 0) {
-                return ResponseEntity.badRequest().body("Erro: Dados inválidos para criar a preferência.");
-            }
-
-            // Cria o item de pagamento
+            // Cria um item de pagamento
             PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
-                    .title(checkoutRequest.getTitle())
-                    .quantity(1)
-                    .unitPrice(BigDecimal.valueOf(checkoutRequest.getPrice()))
-                    .currencyId("BRL")
+                    .title(request.getTitle()) // Nome do produto
+                    .quantity(1) // Quantidade
+                    .currencyId("BRL") // Moeda
+                    .unitPrice(BigDecimal.valueOf(request.getPrice())) // Preço
                     .build();
 
             // Cria a preferência de pagamento
@@ -47,10 +44,11 @@ public class CheckoutController {
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
-            // Retorna o ID da preferência
-            return ResponseEntity.ok(preference.getId());
+            // Retorna o ID da preferência para o frontend iniciar o checkout
+            return ResponseEntity.ok(Collections.singletonMap("id", preference.getId()));
+
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erro ao criar preferência: " + e.getMessage());
+            return ResponseEntity.status(500).body(Collections.singletonMap("error", "Erro ao criar a preferência: " + e.getMessage()));
         }
     }
 }

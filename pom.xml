@@ -16,7 +16,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.6</version>
+        <version>2.7.18</version> <!-- Atualizado para versão mais segura -->
         <relativePath/> <!-- Procura no repositório central -->
     </parent>
 
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.mercadopago</groupId>
             <artifactId>sdk-java</artifactId>
-            <version>2.1.0</version> <!-- Mantemos a versão correta -->
+            <version>2.1.0</version>
         </dependency>
 
         <!-- DevTools para desenvolvimento -->
@@ -62,6 +62,17 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.slaivideos.SlaivideosBackendApplication</mainClass>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin de compilação para evitar erros -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
         </plugins>
