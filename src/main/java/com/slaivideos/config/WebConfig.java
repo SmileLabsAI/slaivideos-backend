@@ -15,11 +15,11 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
+                registry.addMapping("/**") // Permite todas as rotas
                         .allowedOrigins("https://smilelabsai.github.io") // Permitir requisições do frontend
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos permitidos
+                        .allowedHeaders("*") // Permitir todos os headers
+                        .allowCredentials(true); // Permitir envio de credenciais (se necessário)
             }
         };
     }
