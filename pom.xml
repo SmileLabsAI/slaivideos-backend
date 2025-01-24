@@ -16,8 +16,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version> <!-- Atualizado para versão mais segura -->
-        <relativePath/> <!-- Procura no repositório central -->
+        <version>2.7.6</version> <!-- Versão que estava funcionando -->
+        <relativePath/>
     </parent>
 
     <!-- Definição da versão do Java -->
@@ -35,8 +35,14 @@
         <!-- SDK do Mercado Pago -->
         <dependency>
             <groupId>com.mercadopago</groupId>
-            <artifactId>sdk-java</artifactId>
-            <version>2.1.0</version>
+            <artifactId>dx-java</artifactId>
+            <version>1.8.0</version> <!-- Versão corrigida (sem espaço no final) -->
+        </dependency>
+
+        <!-- Biblioteca de validação para DTOs -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- DevTools para desenvolvimento -->
@@ -57,6 +63,7 @@
 
     <build>
         <plugins>
+            <!-- Plugin do Spring Boot -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -65,14 +72,14 @@
                 </configuration>
             </plugin>
 
-            <!-- Plugin de compilação para evitar erros -->
+            <!-- Plugin do compilador Maven para garantir Java 17 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>

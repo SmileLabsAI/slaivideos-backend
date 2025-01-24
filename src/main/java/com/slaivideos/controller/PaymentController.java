@@ -12,7 +12,7 @@ import java.util.Objects;
 @RequestMapping("/api/payment")
 public class PaymentController {
 
-    @PostMapping("/checkout")
+    @PostMapping("/api/payment/checkout")
     public ResponseEntity<Map<String, String>> processPayment(@RequestBody PaymentRequest paymentRequest) {
         if (Objects.isNull(paymentRequest) || paymentRequest.getAmount() <= 0) {
             return ResponseEntity.badRequest().body(Map.of("error", "Valor do pagamento inválido."));

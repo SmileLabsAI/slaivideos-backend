@@ -1,54 +1,56 @@
 package com.slaivideos.controller;
 
-import com.mercadopago.MercadoPagoConfig;
-import com.mercadopago.client.preference.PreferenceClient;
-import com.mercadopago.client.preference.PreferenceItemRequest;
-import com.mercadopago.client.preference.PreferenceRequest;
-import com.mercadopago.resources.preference.Preference;
+import com.mercadopago.MercadoPago;
+import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.Preference;
+import com.mercadopago.resources.datastructures.preference.Item;
+import com.mercadopago.resources.datastructures.preference.Payer;
 import com.slaivideos.model.CheckoutRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payment")
-@CrossOrigin(origins = "*") // Permitir chamadas de qualquer origem
+@CrossOrigin(origins = "*") // Permite chamadas de qualquer origem
 public class CheckoutController {
 
-    // Carrega a credencial do Mercado Pago do application.properties
     @Value("${mercadopago.access-token}")
     private String accessToken;
 
     @PostMapping("/checkout")
     public ResponseEntity<?> createPreference(@RequestBody CheckoutRequest request) {
         try {
-            // Configura o SDK do Mercado Pago com o Access Token
-            MercadoPagoConfig.setAccessToken(accessToken);
+            MercadoPago.SDK.setAccessToken(accessToken);
 
-            // Cria um item de pagamento
-            PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
-                    .title(request.getTitle()) // Nome do produto
-                    .quantity(1) // Quantidade
-                    .currencyId("BRL") // Moeda
-                    .unitPrice(BigDecimal.valueOf(request.getPrice())) // Preço
-                    .build();
+            // Criando um item de pagamento
+            Item item = new Item()
+                    .setTitle(request.getTitle())
+                    .setQuantity(1)
+                    .setCurrencyId("BRL")
+                    .setUnitPrice((float) request.getPrice());
 
-            // Cria a preferência de pagamento
-            PreferenceRequest preferenceRequest = PreferenceRequest.builder()
-                    .items(Collections.singletonList(itemRequest))
-                    .build();
+            // Criando um comprador (Payer)
+            Payer payer = new Payer();
+            payer.setEmail("comprador@email.com");
 
-            PreferenceClient client = new PreferenceClient();
-            Preference preference = client.create(preferenceRequest);
+            // Criando a preferência de pagamento
+            Preference preference = new Preference();
+            preference.appendItem(item);
+            preference.setPayer(payer);
+            preference.save();
 
-            // Retorna o ID da preferência para o frontend iniciar o checkout
-            return ResponseEntity.ok(Collections.singletonMap("id", preference.getId()));
+            // Retornando o ID da preferência para o frontend
+            Map<String, String> response = new HashMap<>();
+            response.put("id", preference.getId());
 
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Collections.singletonMap("error", "Erro ao criar a preferência: " + e.getMessage()));
+            return ResponseEntity.ok(response);
+
+        } catch (MPException e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Erro ao criar a preferência: " + e.getMessage()));
         }
     }
 }
