@@ -5,14 +5,37 @@ public class PaymentRequest {
     private String currency;
     private String paymentMethod;
 
-    public PaymentRequest() {}  // Construtor vazio para serialização
+    // Construtor vazio para serialização
+    public PaymentRequest() {}
 
-    public double getAmount() { return amount; }
-    public void setAmount(double amount) { this.amount = amount; }
+    // Construtor com parâmetros
+    public PaymentRequest(double amount, String currency, String paymentMethod) {
+        this.amount = amount;
+        this.currency = currency;
+        this.paymentMethod = paymentMethod;
+    }
 
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
+    public double getAmount() {
+        return amount;
+    }
 
-    public String getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 }
