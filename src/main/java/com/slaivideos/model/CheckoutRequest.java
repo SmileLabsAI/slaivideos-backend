@@ -1,17 +1,13 @@
 package com.slaivideos.model;
 
-public class CheckoutRequest {
+public class  CheckoutRequest {
     private String title;
     private double price;
 
-    public CheckoutRequest() {
-    }
+    // Construtor vazio (necessário para serialização)
+    public CheckoutRequest() {}
 
-    public CheckoutRequest(String title, double price) {
-        this.title = title;
-        this.price = price;
-    }
-
+    // Getters e Setters
     public String getTitle() {
         return title;
     }

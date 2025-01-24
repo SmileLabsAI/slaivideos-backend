@@ -19,11 +19,11 @@ public class WebConfig {
                         .allowedOrigins(
                                 "https://smilelabsai.github.io",
                                 "https://slaivideos-backend.onrender.com"
-                        ) // Permitir requisições do frontend e do próprio backend
-                        .allowedMethods("*") // Permitir todos os métodos HTTP
+                        ) // Permite requisições do frontend e do próprio backend
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos permitidos
                         .allowedHeaders("*") // Permitir todos os headers
                         .allowCredentials(true) // Permitir credenciais (se necessário)
-                        .maxAge(3600); // Cache de CORS por 1 hora
+                        .maxAge(3600); // Tempo de cache para requisições CORS
             }
         };
     }
