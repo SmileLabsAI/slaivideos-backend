@@ -1,14 +1,14 @@
-# Usa uma imagem do OpenJDK como base
-FROM openjdk:17-jdk-slim AS build
+# Usa uma imagem base do Maven com JDK 17
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos do projeto para o contêiner
+# Copia os arquivos do projeto para dentro do contêiner
 COPY . .
 
 # Compila o projeto (gera o JAR dentro do contêiner)
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Segunda etapa: Criando a imagem final
 FROM openjdk:17-jdk-slim
