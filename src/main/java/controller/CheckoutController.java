@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/checkout")
@@ -23,7 +25,7 @@ public class CheckoutController {
     @PostMapping("/create_preference")
     public ResponseEntity<?> createPreference(@RequestBody CheckoutRequest checkoutRequest) {
         try {
-            // Configura o Mercado Pago com o Access Token do application.properties
+            // Configura o Mercado Pago com o Access Token
             MercadoPagoConfig.setAccessToken(mercadoPagoAccessToken);
 
             // Cria o item de pagamento
@@ -42,10 +44,15 @@ public class CheckoutController {
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
-            // Retorna o ID da preferência
-            return ResponseEntity.ok(preference.getId());
+            // Retorna um JSON válido com o ID da preferência
+            Map<String, String> response = new HashMap<>();
+            response.put("id", preference.getId());
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erro ao criar preferência: " + e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Erro ao criar preferência: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
         }
     }
 }

@@ -4,19 +4,41 @@ import com.slaivideos.model.PaymentRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
 
     @PostMapping("/checkout")
-    public ResponseEntity<String> processPayment(@RequestBody PaymentRequest paymentRequest) {
-        // Simula um pagamento processado com sucesso
-        return ResponseEntity.ok("Pagamento processado com sucesso! Valor: " + paymentRequest.getAmount());
+    public ResponseEntity<?> processPayment(@RequestBody PaymentRequest paymentRequest) {
+        try {
+            // Verifica se o request é nulo ou se amount é nulo ou inválido
+            if (paymentRequest == null || paymentRequest.getAmount() == null || paymentRequest.getAmount() <= 0) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Valor do pagamento inválido.");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+
+            // Simula um pagamento processado com sucesso
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Pagamento processado com sucesso!");
+            response.put("amount", paymentRequest.getAmount());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Erro ao processar pagamento: " + e.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
     }
 
     @GetMapping("/status")
-    public ResponseEntity<String> checkPaymentStatus() {
+    public ResponseEntity<Map<String, String>> checkPaymentStatus() {
         // Simula uma verificação de status do pagamento
-        return ResponseEntity.ok("Status do pagamento: Aprovado");
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "Aprovado");
+        return ResponseEntity.ok(response);
     }
 }
