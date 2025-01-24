@@ -5,41 +5,41 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Definições básicas do projeto -->
+    <!-- Definições do projeto -->
     <groupId>com.slaivideos</groupId>
     <artifactId>slaivideos-backend</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>SLAI Videos Backend</name>
 
-    <!-- Parent do Spring Boot (versão 2.7.6) -->
+    <!-- Parent do Spring Boot -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.6</version>
-        <relativePath/> <!-- procura no repositório central -->
+        <relativePath/> <!-- Procura no repositório central -->
     </parent>
 
-    <!-- Define versão do Java -->
+    <!-- Definição da versão do Java -->
     <properties>
         <java.version>17</java.version>
     </properties>
 
     <dependencies>
-        <!-- Starter Web para criar APIs REST -->
+        <!-- Spring Boot Web para APIs REST -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- SDK do Mercado Pago (versão 2.1.0) -->
+        <!-- SDK do Mercado Pago -->
         <dependency>
             <groupId>com.mercadopago</groupId>
             <artifactId>sdk-java</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.0</version> <!-- Mantemos a versão correta -->
         </dependency>
 
-        <!-- DevTools (hot reload em desenvolvimento) -->
+        <!-- DevTools para desenvolvimento -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -47,7 +47,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Starter Test (para testes) -->
+        <!-- Spring Boot Starter Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -57,7 +57,6 @@
 
     <build>
         <plugins>
-            <!-- Plugin do Spring Boot para empacotar aplicação -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

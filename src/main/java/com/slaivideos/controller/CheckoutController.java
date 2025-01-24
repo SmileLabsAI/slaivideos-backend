@@ -17,21 +17,21 @@ import java.util.Collections;
 @RequestMapping("/api/checkout")
 public class CheckoutController {
 
-    @Value("${mercadopago.access-token}") // Obtém o Access Token do Mercado Pago
+    @Value("${mercadopago.access-token}")
     private String mercadoPagoAccessToken;
 
     @PostMapping("/create_preference")
     public ResponseEntity<?> createPreference(@RequestBody CheckoutRequest checkoutRequest) {
         try {
-            // Configura o Mercado Pago com o Access Token
+            // Configura o Mercado Pago
             MercadoPagoConfig.setAccessToken(mercadoPagoAccessToken);
 
-            // Validação dos dados
-            if (checkoutRequest.getTitle() == null || checkoutRequest.getTitle().isEmpty() || checkoutRequest.getPrice() <= 0) {
-                return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Dados inválidos para criar a preferência."));
+            // Verifica se os dados são válidos
+            if (checkoutRequest.getTitle() == null || checkoutRequest.getPrice() <= 0) {
+                return ResponseEntity.badRequest().body("Erro: Dados inválidos para criar a preferência.");
             }
 
-            // Criação do item da preferência
+            // Cria o item de pagamento
             PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
                     .title(checkoutRequest.getTitle())
                     .quantity(1)
@@ -39,7 +39,7 @@ public class CheckoutController {
                     .currencyId("BRL")
                     .build();
 
-            // Criação da preferência de pagamento
+            // Cria a preferência de pagamento
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(Collections.singletonList(itemRequest))
                     .build();
@@ -47,11 +47,10 @@ public class CheckoutController {
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
-            // Retorna o ID da preferência para o frontend
-            return ResponseEntity.ok(Collections.singletonMap("id", preference.getId()));
-
+            // Retorna o ID da preferência
+            return ResponseEntity.ok(preference.getId());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Collections.singletonMap("error", "Erro ao criar a preferência de pagamento: " + e.getMessage()));
+            return ResponseEntity.status(500).body("Erro ao criar preferência: " + e.getMessage());
         }
     }
 }
