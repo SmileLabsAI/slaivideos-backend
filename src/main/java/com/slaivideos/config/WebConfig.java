@@ -16,14 +16,10 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Permite todas as rotas
-                        .allowedOrigins(
-                                "https://smilelabsai.github.io",
-                                "https://slaivideos-backend.onrender.com"
-                        ) // Permite requisições do frontend e do próprio backend
+                        .allowedOriginPatterns("https://smilelabsai.github.io") // Corrigido para allowedOriginPatterns
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos permitidos
                         .allowedHeaders("*") // Permitir todos os headers
-                        .allowCredentials(true) // Permitir credenciais (se necessário)
-                        .maxAge(3600); // Tempo de cache para requisições CORS
+                        .allowCredentials(true); // Permitir credenciais
             }
         };
     }
