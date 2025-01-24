@@ -1,58 +1,44 @@
 package com.slaivideos.controller;
 
-import com.mercadopago.MercadoPagoConfig;
-import com.mercadopago.client.preference.PreferenceClient;
-import com.mercadopago.client.preference.PreferenceItemRequest;
-import com.mercadopago.client.preference.PreferenceRequest;
-import com.mercadopago.resources.preference.Preference;
-import com.slaivideos.model.CheckoutRequest;
-import org.springframework.beans.factory.annotation.Value;
+import com.slaivideos.model.PaymentRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/checkout")
-public class CheckoutController {
+@RequestMapping("/api/payment")
+public class PaymentController {
 
-    @Value("${mercadopago.access-token}")
-    private String mercadoPagoAccessToken;
-
-    @PostMapping("/create_preference")
-    public ResponseEntity<?> createPreference(@RequestBody CheckoutRequest checkoutRequest) {
+    @PostMapping("/checkout")
+    public ResponseEntity<?> processPayment(@RequestBody PaymentRequest paymentRequest) {
         try {
-            // Configura o Mercado Pago com o Access Token
-            MercadoPagoConfig.setAccessToken(mercadoPagoAccessToken);
+            // Verifica se o request é válido
+            if (paymentRequest == null || paymentRequest.getAmount() == null || paymentRequest.getAmount() <= 0.0) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Valor do pagamento inválido.");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
 
-            // Cria o item de pagamento
-            PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
-                    .title(checkoutRequest.getTitle())
-                    .quantity(1)
-                    .unitPrice(BigDecimal.valueOf(checkoutRequest.getPrice()))
-                    .currencyId("BRL")
-                    .build();
+            // Simula um pagamento processado com sucesso
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Pagamento processado com sucesso!");
+            response.put("amount", paymentRequest.getAmount());
 
-            // Cria a preferência de pagamento
-            PreferenceRequest preferenceRequest = PreferenceRequest.builder()
-                    .items(Collections.singletonList(itemRequest))
-                    .build();
-
-            PreferenceClient client = new PreferenceClient();
-            Preference preference = client.create(preferenceRequest);
-
-            // Retorna um JSON válido com o ID da preferência
-            Map<String, String> response = new HashMap<>();
-            response.put("id", preference.getId());
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Erro ao criar preferência: " + e.getMessage());
+            errorResponse.put("error", "Erro ao processar pagamento: " + e.getMessage());
             return ResponseEntity.status(500).body(errorResponse);
         }
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, String>> checkPaymentStatus() {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "Aprovado");
+        return ResponseEntity.ok(response);
     }
 }
