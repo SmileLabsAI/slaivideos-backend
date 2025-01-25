@@ -1,7 +1,11 @@
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\SlaivideosBackendApplication.java
+C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\SupabaseTestController.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\WebConfig.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\CheckoutController.java
+C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\SupabaseConfig.java
+C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\SupabaseClient.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\HealthCheckController.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\PaymentController.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\model\CheckoutRequest.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\model\PaymentRequest.java
+C:\Users\pichau\slaivideos-backend\src\main\java\service\SupabaseUserService.java
