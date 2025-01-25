@@ -16,7 +16,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Permite todas as rotas
-                        .allowedOriginPatterns("https://smilelabsai.github.io") // Corrigido para allowedOriginPatterns
+                        .allowedOriginPatterns("https://smilelabsai.github.io") // ⚠️ CORRIGIDO: allowedOrigins → allowedOriginPatterns
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos permitidos
                         .allowedHeaders("*") // Permitir todos os headers
                         .allowCredentials(true); // Permitir credenciais
