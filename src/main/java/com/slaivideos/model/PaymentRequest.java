@@ -1,20 +1,21 @@
 package com.slaivideos.model;
 
 public class PaymentRequest {
-    private double amount;
+    private final String title;
+    private final double amount;
 
-    public PaymentRequest() {
+    // Construtor para inicializar os valores (evita setters desnecessários)
+    public PaymentRequest(String title, double amount) {
+        this.title = title;
+        this.amount = amount;
     }
 
-    public PaymentRequest(double amount) {
-        this.amount = amount;
+    // Getters
+    public String getTitle() {
+        return title;
     }
 
     public double getAmount() {
         return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
     }
 }
