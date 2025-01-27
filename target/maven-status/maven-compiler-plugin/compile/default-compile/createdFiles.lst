@@ -9,4 +9,5 @@ com\slaivideos\config\WebConfig$1.class
 com\slaivideos\controller\SupabaseTestController.class
 com\slaivideos\config\SupabaseClient.class
 com\slaivideos\service\SupabaseUserService.class
+com\slaivideos\controller\PaymentController$1.class
 com\slaivideos\SlaivideosBackendApplication.class
