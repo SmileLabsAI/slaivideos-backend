@@ -5,6 +5,7 @@ C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\Check
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\service\SupabaseUserService.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\SupabaseConfig.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\SupabaseClient.java
+C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\CorsConfig.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\HealthCheckController.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\PaymentController.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\model\CheckoutRequest.java

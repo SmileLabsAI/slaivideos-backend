@@ -15,11 +15,11 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Permite todas as rotas
-                        .allowedOriginPatterns("*") // Permite qualquer origem (Atenção: só use isso em ambientes de testes)
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos permitidos
-                        .allowedHeaders("*") // Permitir todos os headers
-                        .allowCredentials(true); // Permitir credenciais
+                registry.addMapping("/**")
+                        .allowedOriginPatterns("http://localhost:3000", "https://smilelabsai.github.io/SLAIVideos") // Defina domínios específicos
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }

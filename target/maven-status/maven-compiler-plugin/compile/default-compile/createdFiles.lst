@@ -6,8 +6,10 @@ com\slaivideos\controller\CheckoutController.class
 com\slaivideos\config\SupabaseConfig.class
 com\slaivideos\config\WebConfig.class
 com\slaivideos\config\WebConfig$1.class
+com\slaivideos\config\CorsConfig$1.class
+com\slaivideos\config\CorsConfig.class
 com\slaivideos\controller\SupabaseTestController.class
 com\slaivideos\config\SupabaseClient.class
+com\slaivideos\model\PaymentRequest$Item.class
 com\slaivideos\service\SupabaseUserService.class
-com\slaivideos\controller\PaymentController$1.class
 com\slaivideos\SlaivideosBackendApplication.class
