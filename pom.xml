@@ -65,8 +65,6 @@
             <version>2.1.0</version>
         </dependency>
 
-
-
         <!-- Biblioteca de validação para DTOs -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -101,6 +99,14 @@
         </repository>
     </repositories>
 
-
+    <!-- ✅ Adicionando o plugin do Spring Boot para gerar o JAR correto -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
