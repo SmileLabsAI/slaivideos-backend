@@ -1,6 +1,7 @@
 package com.slaivideos.controller;
 
 import com.slaivideos.model.PaymentRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,16 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
+
+    @Value("${mercadopago.public-key}")
+    private String publicKey;
+
+    @GetMapping("/public-key")
+    public ResponseEntity<Map<String, String>> getPublicKey() {
+        Map<String, String> response = new HashMap<>();
+        response.put("publicKey", publicKey);
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/process")
     public ResponseEntity<Map<String, String>> processPayment(@RequestBody PaymentRequest paymentRequest) {
