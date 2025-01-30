@@ -1,11 +1,11 @@
 package com.slaivideos.controller;
 
 import com.slaivideos.service.SupabaseUserService;
+import com.slaivideos.dto.UserRequestDTO;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -19,20 +19,23 @@ public class SupabaseTestController {
     }
 
     @GetMapping
-    public String listarUsuarios() throws IOException {
-        return supabaseUserService.listarUsuarios();
+    public ResponseEntity<?> listarUsuarios() { // ❌ Removemos `throws IOException`
+        String usuarios = supabaseUserService.listarUsuarios();
+        return ResponseEntity.ok(usuarios);
     }
 
     @PostMapping
-    public String criarUsuario(@RequestBody Map<String, String> novoUsuario) throws IOException {
-        String nome = novoUsuario.get("nome");
-        String email = novoUsuario.get("email");
-        String senha = novoUsuario.get("senha");
-
-        if (nome == null || email == null || senha == null) {
-            return "Erro: Campos obrigatórios (nome, email, senha) não podem ser nulos.";
+    public ResponseEntity<?> criarUsuario(@RequestBody UserRequestDTO novoUsuario) { // ❌ Removemos `throws IOException`
+        if (novoUsuario.getNome() == null || novoUsuario.getEmail() == null || novoUsuario.getSenha() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro: Campos obrigatórios (nome, email, senha) não podem ser nulos.");
         }
 
-        return supabaseUserService.criarUsuario(nome, email, senha);
+        String resultado = supabaseUserService.criarUsuario(
+                novoUsuario.getNome(),
+                novoUsuario.getEmail(),
+                novoUsuario.getSenha()
+        );
+        return ResponseEntity.ok(resultado);
     }
 }

@@ -1,51 +1,73 @@
 package com.slaivideos.service;
 
-import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
-import java.io.IOException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-@Service  // Garante que o Spring reconheça esta classe como um Bean
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+@Service
 public class SupabaseUserService {
 
-    private final OkHttpClient client = new OkHttpClient();
-    private static final String SUPABASE_URL = "https://rxqieqpxjztnelrsibqc.supabase.co";
-    private static final String SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cWllcXB4anp0bmVscnNpYnFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNzgzMDMwNiwiZXhwIjoyMDUzNDA2MzA2fQ.gPPcCH_bLe3O3ncWfHd_W8SyAnxWLuts91wDTbmJETA";
+    private final OkHttpClient client;
+    private final ObjectMapper objectMapper = new ObjectMapper(); // Para manipular JSON
 
-    public String listarUsuarios() throws IOException {
+    @Value("${supabase.url}")
+    private String supabaseUrl;
+
+    @Value("${supabase.key}")
+    private String supabaseKey;
+
+    public SupabaseUserService(OkHttpClient client) {
+        this.client = client;
+    }
+
+    public String listarUsuarios() {
         Request request = new Request.Builder()
-                .url(SUPABASE_URL + "/rest/v1/usuarios?select=*")
-                .addHeader("apikey", SUPABASE_KEY)
-                .addHeader("Authorization", "Bearer " + SUPABASE_KEY)
+                .url(supabaseUrl + "/rest/v1/usuarios?select=*")
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Erro na requisição: " + response);
+                return "Erro ao buscar usuários: " + response.message();
             }
-            return response.body() != null ? response.body().string() : "Nenhum dado encontrado";
+            return response.body() != null ? response.body().string() : "Nenhum usuário encontrado.";
+        } catch (IOException e) {
+            return "Erro de conexão: " + e.getMessage();
         }
     }
 
-    public String criarUsuario(String nome, String email, String senha) throws IOException {
-        String jsonBody = "{" +
-                "\"nome\": \"" + nome + "\"," +
-                "\"email\": \"" + email + "\"," +
-                "\"senha\": \"" + senha + "\"}";
+    public String criarUsuario(String nome, String email, String senha) {
+        try {
+            Map<String, String> userData = new HashMap<>();
+            userData.put("nome", nome);
+            userData.put("email", email);
+            userData.put("senha", senha);
 
-        RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json"));
-        Request request = new Request.Builder()
-                .url(SUPABASE_URL + "/rest/v1/usuarios")
-                .post(body)
-                .addHeader("apikey", SUPABASE_KEY)
-                .addHeader("Authorization", "Bearer " + SUPABASE_KEY)
-                .addHeader("Content-Type", "application/json")
-                .build();
+            String jsonBody = objectMapper.writeValueAsString(userData); // Converte Map para JSON
 
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Erro ao criar usuário: " + response);
+            RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json"));
+            Request request = new Request.Builder()
+                    .url(supabaseUrl + "/rest/v1/usuarios")
+                    .post(body)
+                    .addHeader("apikey", supabaseKey)
+                    .addHeader("Authorization", "Bearer " + supabaseKey)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    return "Erro ao criar usuário: " + response.message();
+                }
+                return "Usuário criado com sucesso!";
             }
-            return "Usuário criado com sucesso!";
+        } catch (IOException e) {
+            return "Erro ao processar a requisição: " + e.getMessage();
         }
     }
 }

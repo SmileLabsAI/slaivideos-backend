@@ -3,6 +3,7 @@ package com.slaivideos.config;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,25 +12,28 @@ import java.io.IOException;
 @Configuration
 public class SupabaseConfig {
 
-    private static final String SUPABASE_URL = "https://rxqieqpxjztnelrsibqc.supabase.co";
-    private static final String SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cWllcXB4anp0bmVscnNpYnFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNzgzMDMwNiwiZXhwIjoyMDUzNDA2MzA2fQ.gPPcCH_bLe3O3ncWfHd_W8SyAnxWLuts91wDTbmJETA";
+    @Value("${supabase.url}")
+    private String supabaseUrl;
 
-    // Criando o Bean OkHttpClient para ser injetado onde necessário
+    @Value("${supabase.key}")
+    private String supabaseKey;
+
     @Bean
     public OkHttpClient okHttpClient() {
         return new OkHttpClient();
     }
 
-    // Método para testar a conexão com o Supabase
-    public String testConnection() {
+    // Método para testar a conexão com Supabase
+    public String testConnection(OkHttpClient client) {  // ✅ Agora recebe o OkHttpClient como parâmetro
         Request request = new Request.Builder()
-                .url(SUPABASE_URL + "/rest/v1/")
-                .addHeader("apikey", SUPABASE_KEY)
-                .addHeader("Authorization", "Bearer " + SUPABASE_KEY)
+                .url(supabaseUrl + "/rest/v1/usuarios")
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
                 .build();
 
-        try (Response response = okHttpClient().newCall(request).execute()) {
-            return response.isSuccessful() ? "Conexão bem-sucedida!" : "Falha na conexão!";
+        try (Response response = client.newCall(request).execute()) {
+            return response.isSuccessful() ? "Conexão com Supabase bem-sucedida! ✅"
+                    : "Falha na conexão ❌ Código: " + response.code();
         } catch (IOException e) {
             return "Erro ao conectar: " + e.getMessage();
         }

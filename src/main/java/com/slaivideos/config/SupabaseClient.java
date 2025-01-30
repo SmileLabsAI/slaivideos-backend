@@ -1,29 +1,42 @@
 package com.slaivideos.config;
 
-import okhttp3.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class SupabaseClient {
 
-    private static final String SUPABASE_URL = "https://rxqieqpxjztnelrsibqc.supabase.co";
-    private static final String SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cWllcXB4anp0bmVscnNpYnFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc4MzAzMDYsImV4cCI6MjA1MzQwNjMwNn0.-eFyRvUhRRGwS5u2zOdKjhHronlw8u-POJzCaBocBxc";
+    @Value("${supabase.url}")  // 🔄 Variável de ambiente restaurada
+    private String supabaseUrl;
 
-    private final OkHttpClient client = new OkHttpClient();
+    @Value("${supabase.key}")  // 🔄 Variável de ambiente restaurada
+    private String supabaseKey;
 
-    public String buscarUsuarios() throws IOException {
-        Request request = new Request.Builder()
-                .url(SUPABASE_URL + "/rest/v1/usuarios")
-                .addHeader("apikey", SUPABASE_KEY)
-                .addHeader("Authorization", "Bearer " + SUPABASE_KEY)
-                .addHeader("Content-Type", "application/json")
-                .get()
-                .build();
+    private final RestTemplate restTemplate;
 
-        try (Response response = client.newCall(request).execute()) {
-            return response.body() != null ? response.body().string() : "Erro: resposta vazia";
+    public SupabaseClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    public String buscarUsuarios() {
+        String url = supabaseUrl + "/rest/v1/usuarios";  // ✅ URL agora vem do application.properties
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("apikey", supabaseKey);
+        headers.set("Authorization", "Bearer " + supabaseKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return response.getBody();
+        } else {
+            return "Erro ao buscar usuários: " + response.getStatusCode();
         }
     }
 }

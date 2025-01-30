@@ -1,9 +1,9 @@
 com\slaivideos\controller\HealthCheckController.class
+com\slaivideos\dto\UserRequestDTO.class
+com\slaivideos\config\AppConfig.class
 com\slaivideos\controller\ContactController.class
 com\slaivideos\config\SupabaseConfig.class
-com\slaivideos\config\WebConfig.class
 com\slaivideos\service\ContactService.class
-com\slaivideos\config\WebConfig$1.class
 com\slaivideos\config\CorsConfig.class
 com\slaivideos\controller\SupabaseTestController.class
 com\slaivideos\config\SupabaseClient.class
