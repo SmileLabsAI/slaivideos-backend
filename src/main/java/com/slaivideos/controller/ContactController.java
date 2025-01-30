@@ -5,11 +5,9 @@ import com.slaivideos.service.ContactService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/contact")
-@CrossOrigin(origins = "*")  // 🔹 Permitir requisições de qualquer origem
+@CrossOrigin(origins = "*")
 public class ContactController {
 
     private final ContactService contactService;
@@ -20,11 +18,7 @@ public class ContactController {
 
     @PostMapping
     public ResponseEntity<String> receberMensagem(@RequestBody ContactRequest request) {
-        try {
-            String resposta = contactService.salvarMensagem(request);
-            return ResponseEntity.ok(resposta);
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("Erro ao processar a mensagem.");
-        }
+        String resposta = contactService.salvarMensagem(request);
+        return ResponseEntity.ok(resposta);
     }
 }

@@ -5,17 +5,14 @@ public class ContactRequest {
     private String email;
     private String mensagem;
 
-    // Construtor padrão
     public ContactRequest() {}
 
-    // Construtor completo
     public ContactRequest(String nome, String email, String mensagem) {
         this.nome = nome;
         this.email = email;
         this.mensagem = mensagem;
     }
 
-    // Getters e Setters
     public String getNome() {
         return nome;
     }
