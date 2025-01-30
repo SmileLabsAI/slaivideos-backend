@@ -19,23 +19,38 @@ public class SupabaseTestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listarUsuarios() { // ❌ Removemos `throws IOException`
-        String usuarios = supabaseUserService.listarUsuarios();
-        return ResponseEntity.ok(usuarios);
+    public ResponseEntity<?> listarUsuarios() {
+        try {
+            String usuarios = supabaseUserService.listarUsuarios();
+            return ResponseEntity.ok(usuarios);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao buscar usuários: " + e.getMessage());
+        }
     }
 
     @PostMapping
-    public ResponseEntity<?> criarUsuario(@RequestBody UserRequestDTO novoUsuario) { // ❌ Removemos `throws IOException`
+    public ResponseEntity<?> criarUsuario(@RequestBody UserRequestDTO novoUsuario) {
         if (novoUsuario.getNome() == null || novoUsuario.getEmail() == null || novoUsuario.getSenha() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Erro: Campos obrigatórios (nome, email, senha) não podem ser nulos.");
         }
 
-        String resultado = supabaseUserService.criarUsuario(
-                novoUsuario.getNome(),
-                novoUsuario.getEmail(),
-                novoUsuario.getSenha()
-        );
-        return ResponseEntity.ok(resultado);
+        try {
+            String resultado = supabaseUserService.criarUsuario(
+                    novoUsuario.getNome(),
+                    novoUsuario.getEmail(),
+                    novoUsuario.getSenha()
+            );
+
+            // ✅ Redirecionamento para página de sucesso
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .header("Location", "/sucesso.html")
+                    .build();
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao criar usuário: " + e.getMessage());
+        }
     }
 }
