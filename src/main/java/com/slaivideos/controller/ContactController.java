@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/contact")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"https://smilelabsai.github.io", "https://slaivideos-backend-1.onrender.com"}) // Permitindo apenas origens seguras
 public class ContactController {
 
     private final ContactService contactService;
@@ -18,7 +18,14 @@ public class ContactController {
 
     @PostMapping
     public ResponseEntity<String> receberMensagem(@RequestBody ContactRequest request) {
-        String resposta = contactService.salvarMensagem(request);
-        return ResponseEntity.ok(resposta);
+        try {
+            String resposta = contactService.salvarMensagem(request);
+            if (resposta.startsWith("Erro")) {
+                return ResponseEntity.status(500).body(resposta); // Se houver erro, retorna 500
+            }
+            return ResponseEntity.ok(resposta); // Se tudo der certo, retorna 200
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro ao processar a solicitação: " + e.getMessage());
+        }
     }
 }
