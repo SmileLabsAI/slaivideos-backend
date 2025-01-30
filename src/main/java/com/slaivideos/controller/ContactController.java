@@ -1,31 +1,35 @@
 package com.slaivideos.controller;
 
-import com.slaivideos.model.ContactRequest;
-import com.slaivideos.service.ContactService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/contact")
-@CrossOrigin(origins = {"https://smilelabsai.github.io", "https://slaivideos-backend-1.onrender.com"}) // Permitindo apenas origens seguras
+@CrossOrigin(origins = {
+        "https://smilelabsai.github.io",
+        "https://slaivideos-backend-1.onrender.com",
+        "https://rxqieqpxjztnelrsibqc.supabase.co"
+})
 public class ContactController {
 
-    private final ContactService contactService;
-
-    public ContactController(ContactService contactService) {
-        this.contactService = contactService;
-    }
-
     @PostMapping
-    public ResponseEntity<String> receberMensagem(@RequestBody ContactRequest request) {
-        try {
-            String resposta = contactService.salvarMensagem(request);
-            if (resposta.startsWith("Erro")) {
-                return ResponseEntity.status(500).body(resposta); // Se houver erro, retorna 500
-            }
-            return ResponseEntity.ok(resposta); // Se tudo der certo, retorna 200
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erro ao processar a solicitação: " + e.getMessage());
+    public ResponseEntity<Map<String, String>> handleContact(@RequestBody Map<String, String> request) {
+        String nome = request.get("nome");
+        String email = request.get("email");
+        String mensagem = request.get("mensagem");
+
+        if (nome == null || email == null || mensagem == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Todos os campos são obrigatórios"));
         }
+
+        System.out.println("Nova mensagem recebida:");
+        System.out.println("Nome: " + nome);
+        System.out.println("Email: " + email);
+        System.out.println("Mensagem: " + mensagem);
+
+        return ResponseEntity.ok(Map.of("message", "Mensagem recebida com sucesso!"));
     }
 }
