@@ -20,23 +20,23 @@ public class ContactController {
 
     @PostMapping
     public ResponseEntity<Map<String, String>> handleContact(@RequestBody Map<String, String> request) {
-        String nome = request.get("name");
+        String nome = request.get("nome");
         String email = request.get("email");
         String mensagem = request.get("mensagem");
 
-        if (name == null || email == null || mensagem == null) {
+        if (nome == null || email == null || mensagem == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Todos os campos são obrigatórios"));
         }
 
         // ✅ Restaurando logs para debug
         System.out.println("Nova mensagem recebida:");
-        System.out.println("Name: " + name);
+        System.out.println("Nome: " + nome);
         System.out.println("Email: " + email);
         System.out.println("Mensagem: " + mensagem);
 
         // ✅ Criando objeto de requisição manualmente para manter compatibilidade
         ContactRequest contactRequest = new ContactRequest();
-        contactRequest.setName(name);
+        contactRequest.setNome(nome);
         contactRequest.setEmail(email);
         contactRequest.setMensagem(mensagem);
 
