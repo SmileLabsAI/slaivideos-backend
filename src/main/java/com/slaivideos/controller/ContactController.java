@@ -1,30 +1,35 @@
-package com.slaivideos.controller; // ✅ Corrigido o package
+package com.slaivideos.controller;
 
+import com.slaivideos.service.ContactService;
+import com.slaivideos.model.ContactRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/contact")
 public class ContactController {
 
-    @PostMapping
-    public ResponseEntity<Map<String, String>> handleContact(@RequestBody Map<String, String> request) {
-        String nome = request.get("nome");
-        String email = request.get("email");
-        String mensagem = request.get("mensagem");
+    private final ContactService contactService;
 
-        if (nome == null || email == null || mensagem == null) {
+    public ContactController(ContactService contactService) {
+        this.contactService = contactService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Map<String, String>> handleContact(@RequestBody ContactRequest request) {
+        if (request.getNome() == null || request.getEmail() == null || request.getMensagem() == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Todos os campos são obrigatórios"));
         }
 
-        System.out.println("Nova mensagem recebida:");
-        System.out.println("Nome: " + nome);
-        System.out.println("Email: " + email);
-        System.out.println("Mensagem: " + mensagem);
+        // Agora, salvamos a mensagem no Supabase!
+        String resultado = contactService.salvarMensagem(request);
 
-        return ResponseEntity.ok(Map.of("message", "Mensagem recebida com sucesso!"));
+        if (resultado.contains("Erro")) {
+            return ResponseEntity.status(500).body(Map.of("error", resultado));
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Mensagem recebida e salva com sucesso!"));
     }
 }
