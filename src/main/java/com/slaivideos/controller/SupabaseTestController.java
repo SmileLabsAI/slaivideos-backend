@@ -9,7 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
+@CrossOrigin(
+        origins = {
+                "https://smilelabsai.github.io",
+                "https://slaivideos-backend-1.onrender.com",
+                "https://rxqieqpxjztnelrsibqc.supabase.com"
+        },
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS}
+)
 @RestController
 @RequestMapping("/usuarios")
 public class SupabaseTestController {
@@ -53,7 +61,7 @@ public class SupabaseTestController {
         }
     }
 
-    // ✅ Novo endpoint para login de usuários
+    // ✅ Endpoint de Login
     @PostMapping("/login")
     public ResponseEntity<?> loginUsuario(@RequestBody UserRequestDTO usuario) {
         if (usuario.getEmail() == null || usuario.getSenha() == null) {
@@ -63,7 +71,7 @@ public class SupabaseTestController {
         try {
             String resultado = supabaseUserService.loginUsuario(usuario.getEmail(), usuario.getSenha());
 
-            if (resultado.equals("Login bem-sucedido!")) {
+            if ("Login bem-sucedido!".equals(resultado)) {
                 return ResponseEntity.ok(Map.of("message", resultado));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", resultado));
@@ -76,7 +84,12 @@ public class SupabaseTestController {
 
     // ✅ Adicionando suporte a OPTIONS para resolver o erro de CORS
     @RequestMapping(value = "/login", method = RequestMethod.OPTIONS)
-    public ResponseEntity<?> preflight() {
+    public ResponseEntity<?> preflightLogin() {
+        return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "/usuarios", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> preflightUsuarios() {
         return ResponseEntity.ok().build();
     }
 }

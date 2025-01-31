@@ -1,4 +1,4 @@
-package com.slaivideos.config; // ✅ Certifique-se de que o package está correto
+package com.slaivideos.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -12,11 +12,11 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns(
-                        "https://smilelabsai.github.io", // ✅ Frontend GitHub Pages
-                        "https://slaivideos-backend-1.onrender.com", // ✅ Backend Render
-                        "https://rxqieqpxjztnelrsibqc.supabase.com" // ✅ Supabase API
+                        "https://smilelabsai.github.io",
+                        "https://slaivideos-backend-1.onrender.com",
+                        "https://rxqieqpxjztnelrsibqc.supabase.com"
                 )
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("*") // ✅ Agora aceita TODOS os métodos, incluindo OPTIONS
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
