@@ -5,6 +5,7 @@ import com.slaivideos.model.ContactRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -18,13 +19,29 @@ public class ContactController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> handleContact(@RequestBody ContactRequest request) {
-        if (request.getNome() == null || request.getEmail() == null || request.getMensagem() == null) {
+    public ResponseEntity<Map<String, String>> handleContact(@RequestBody Map<String, String> request) {
+        String nome = request.get("nome");
+        String email = request.get("email");
+        String mensagem = request.get("mensagem");
+
+        if (nome == null || email == null || mensagem == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Todos os campos são obrigatórios"));
         }
 
-        // Agora, salvamos a mensagem no Supabase!
-        String resultado = contactService.salvarMensagem(request);
+        // ✅ Restaurando logs para debug
+        System.out.println("Nova mensagem recebida:");
+        System.out.println("Nome: " + nome);
+        System.out.println("Email: " + email);
+        System.out.println("Mensagem: " + mensagem);
+
+        // ✅ Criando objeto de requisição manualmente para manter compatibilidade
+        ContactRequest contactRequest = new ContactRequest();
+        contactRequest.setNome(nome);
+        contactRequest.setEmail(email);
+        contactRequest.setMensagem(mensagem);
+
+        // ✅ Enviando a mensagem ao Supabase
+        String resultado = contactService.salvarMensagem(contactRequest);
 
         if (resultado.contains("Erro")) {
             return ResponseEntity.status(500).body(Map.of("error", resultado));
