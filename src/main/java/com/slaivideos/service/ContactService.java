@@ -10,7 +10,7 @@ public class ContactService {
     private final OkHttpClient client = new OkHttpClient();
 
     private static final String SUPABASE_URL = "https://rxqieqpxjztnelrsibqc.supabase.co/rest/v1";
-    private static final String SUPABASE_KEY = "SUA_SERVICE_ROLE_KEY_AQUI";  // Insira a chave correta
+    private static final String SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cWllcXB4anp0bmVscnNpYnFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNzgzMDMwNiwiZXhwIjoyMDUzNDA2MzA2fQ.gPPcCH_bLe3O3ncWfHd_W8SyAnxWLuts91wDTbmJETA";  // Insira a chave correta
 
     private static final String TABLE_NAME = "Contato";  // Nome exato da tabela no Supabase
 
