@@ -51,9 +51,9 @@ public class SupabaseUserService {
             Map<String, String> userData = new HashMap<>();
             userData.put("nome", nome);
             userData.put("email", email);
-            userData.put("senha", senhaCriptografada); // Salva senha criptografada
+            userData.put("senha", senhaCriptografada);
 
-            String jsonBody = objectMapper.writeValueAsString(userData); // Converte Map para JSON
+            String jsonBody = objectMapper.writeValueAsString(userData);
 
             RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json"));
             Request request = new Request.Builder()
@@ -75,7 +75,6 @@ public class SupabaseUserService {
         }
     }
 
-    // ✅ Novo método para login de usuários
     public String loginUsuario(String email, String senha) {
         try {
             // 🔍 Buscar usuário pelo e-mail no Supabase
