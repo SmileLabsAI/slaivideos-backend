@@ -10,9 +10,9 @@ public class ContactService {
     private final OkHttpClient client = new OkHttpClient();
 
     private static final String SUPABASE_URL = "https://rxqieqpxjztnelrsibqc.supabase.co/rest/v1";
-    private static final String SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cWllcXB4anp0bmVscnNpYnFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNzgzMDMwNiwiZXhwIjoyMDUzNDA2MzA2fQ.gPPcCH_bLe3O3ncW8SyAnxWLuts91wDTbmJETA";
+    private static final String SUPABASE_KEY = "SUA_SERVICE_ROLE_KEY_AQUI";  // Insira a chave correta
 
-    private static final String TABLE_NAME = "Contato"; // Nome correto da tabela no Supabase
+    private static final String TABLE_NAME = "Contato";  // Nome exato da tabela no Supabase
 
     public String salvarMensagem(ContactRequest requestData) {
         try {
@@ -26,11 +26,12 @@ public class ContactService {
 
             RequestBody body = RequestBody.create(jsonBody, MediaType.parse("application/json"));
             Request request = new Request.Builder()
-                    .url(SUPABASE_URL + "/" + TABLE_NAME) // URL da API corrigida
+                    .url(SUPABASE_URL + "/Contato")  // URL corrigida
                     .post(body)
                     .addHeader("apikey", SUPABASE_KEY)
                     .addHeader("Authorization", "Bearer " + SUPABASE_KEY)
                     .addHeader("Content-Type", "application/json")
+                    .addHeader("Prefer", "return=minimal")  // 🔥 Adicionando o cabeçalho correto
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
