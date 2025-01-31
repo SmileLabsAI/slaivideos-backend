@@ -51,6 +51,13 @@
             <version>2.15.0</version>
         </dependency>
 
+        <!-- BCrypt -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
+
         <!-- SLF4J (Logging) -->
         <dependency>
             <groupId>org.slf4j</groupId>
