@@ -18,8 +18,8 @@ public class ContactService {
         try {
             // Construindo o JSON corretamente
             String jsonBody = String.format(
-                    "{\"nome\": \"%s\", \"email\": \"%s\", \"mensagem\": \"%s\"}",
-                    escapeJson(requestData.getNome()),
+                    "{\"name\": \"%s\", \"email\": \"%s\", \"mensagem\": \"%s\"}",
+                    escapeJson(requestData.getName()),
                     escapeJson(requestData.getEmail()),
                     escapeJson(requestData.getMensagem())
             );

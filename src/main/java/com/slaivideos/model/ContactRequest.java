@@ -1,24 +1,24 @@
 package com.slaivideos.model;
 
 public class ContactRequest {
-    private String nome;
+    private String name;
     private String email;
     private String mensagem;
 
     public ContactRequest() {}
 
-    public ContactRequest(String nome, String email, String mensagem) {
-        this.nome = nome;
+    public ContactRequest(String name, String email, String mensagem) {
+        this.name = name;
         this.email = email;
         this.mensagem = mensagem;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
