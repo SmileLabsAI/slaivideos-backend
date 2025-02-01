@@ -53,7 +53,6 @@ public class SupabaseTestController {
                     novoUsuario.getEmail(),
                     novoUsuario.getSenha()
             );
-
             return ResponseEntity.ok(Map.of("message", resultado));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -61,20 +60,23 @@ public class SupabaseTestController {
         }
     }
 
-    // ✅ Endpoint de Login
+    // Endpoint de Login
     @PostMapping("/login")
     public ResponseEntity<?> loginUsuario(@RequestBody UserRequestDTO usuario) {
         if (usuario.getEmail() == null || usuario.getSenha() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro: Email e senha são obrigatórios.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Erro: Email e senha são obrigatórios."));
         }
 
         try {
             String resultado = supabaseUserService.loginUsuario(usuario.getEmail(), usuario.getSenha());
-
             if ("Login bem-sucedido!".equals(resultado)) {
-                return ResponseEntity.ok(Map.of("message", resultado));
+                // Retorne um token. Aqui usamos um token dummy para fins de teste.
+                String token = "dummy-token";
+                return ResponseEntity.ok(Map.of("token", token, "message", resultado));
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", resultado));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", resultado));
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -82,14 +84,15 @@ public class SupabaseTestController {
         }
     }
 
-    // ✅ Adicionando suporte a OPTIONS para resolver o erro de CORS
+    // Preflight para /login
     @RequestMapping(value = "/login", method = RequestMethod.OPTIONS)
     public ResponseEntity<?> preflightLogin() {
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value = "/usuarios", method = RequestMethod.OPTIONS)
-    public ResponseEntity<?> preflightUsuarios() {
+    // Preflight para a base /usuarios (opcional)
+    @RequestMapping(method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> preflight() {
         return ResponseEntity.ok().build();
     }
 }
