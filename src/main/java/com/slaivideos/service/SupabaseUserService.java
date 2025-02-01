@@ -1,6 +1,7 @@
 package com.slaivideos.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import okhttp3.*;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,13 +9,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class SupabaseUserService {
 
     private final OkHttpClient client;
-    private final ObjectMapper objectMapper = new ObjectMapper(); // Para manipular JSON
+    private final ObjectMapper objectMapper = new ObjectMapper(); // Manipulação de JSON
 
     @Value("${supabase.url}")
     private String supabaseUrl;
@@ -31,6 +33,7 @@ public class SupabaseUserService {
                 .url(supabaseUrl + "/rest/v1/usuarios?select=*")
                 .addHeader("apikey", supabaseKey)
                 .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json") // ✅ Corrigido
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -43,14 +46,14 @@ public class SupabaseUserService {
         }
     }
 
-    public String criarUsuario(String nome, String email, String senha) {
+    public String criarUsuario(String nome, String eMail, String senha) { // ✅ "eMail" corrigido
         try {
-            // 🔒 Criptografando senha antes de salvar no banco
+            // Criptografando senha antes de salvar no banco
             String senhaCriptografada = BCrypt.hashpw(senha, BCrypt.gensalt());
 
             Map<String, String> userData = new HashMap<>();
             userData.put("nome", nome);
-            userData.put("email", email);
+            userData.put("e-mail", eMail); // ✅ "e-mail" corrigido
             userData.put("senha", senhaCriptografada);
 
             String jsonBody = objectMapper.writeValueAsString(userData);
@@ -61,7 +64,7 @@ public class SupabaseUserService {
                     .post(body)
                     .addHeader("apikey", supabaseKey)
                     .addHeader("Authorization", "Bearer " + supabaseKey)
-                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Content-Type", "application/json") // ✅ Corrigido
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -75,13 +78,14 @@ public class SupabaseUserService {
         }
     }
 
-    public String loginUsuario(String email, String senha) {
+    public String loginUsuario(String eMail, String senha) { // ✅ "eMail" corrigido
         try {
-            // 🔍 Buscar usuário pelo e-mail no Supabase
+            // Buscar usuário pelo e-mail no Supabase
             Request request = new Request.Builder()
-                    .url(supabaseUrl + "/rest/v1/usuarios?email=eq." + email + "&select=email,senha")
+                    .url(supabaseUrl + "/rest/v1/usuarios?e-mail=eq." + eMail + "&select=e-mail,senha") // ✅ Corrigido
                     .addHeader("apikey", supabaseKey)
                     .addHeader("Authorization", "Bearer " + supabaseKey)
+                    .addHeader("Content-Type", "application/json") // ✅ Corrigido
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -94,10 +98,17 @@ public class SupabaseUserService {
                     return "Usuário não encontrado.";
                 }
 
-                // 🔑 Extrair senha salva no Supabase (criptografada)
-                String senhaCriptografada = responseBody.split("\"senha\":\"")[1].split("\"")[0];
+                // Utilizar ObjectMapper para fazer o parsing do JSON
+                var resultList = objectMapper.readValue(responseBody,
+                        new TypeReference<List<Map<String, Object>>>() {});
+                if (resultList.isEmpty()) {
+                    return "Usuário não encontrado.";
+                }
 
-                // 🔒 Verificar senha digitada com a senha salva (comparação segura)
+                // Extrai a senha criptografada do primeiro registro (supondo e-mail único)
+                String senhaCriptografada = (String) resultList.get(0).get("senha");
+
+                // Verifica a senha informada com a senha armazenada
                 if (BCrypt.checkpw(senha, senhaCriptografada)) {
                     return "Login bem-sucedido!";
                 } else {
