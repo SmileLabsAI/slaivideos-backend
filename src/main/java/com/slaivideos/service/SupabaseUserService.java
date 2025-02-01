@@ -4,12 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.io.Decoders;
 import okhttp3.*;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +30,9 @@ public class SupabaseUserService {
     @Value("${supabase.key}")
     private String supabaseKey;
 
-    private final String JWT_SECRET = "chaveSecreta"; // 🔐 Definir uma chave segura para o JWT
+    @Value("${jwt.secret}")  // Pegando a chave do Render (Variáveis de Ambiente)
+    private String jwtSecret;
+
     private final long EXPIRATION_TIME = 3600000; // 1 hora em milissegundos
 
     public SupabaseUserService(OkHttpClient client) {
@@ -115,11 +121,13 @@ public class SupabaseUserService {
                 // 🔒 Comparação de senha segura
                 if (BCrypt.checkpw(senha, senhaCriptografada)) {
                     // 🔑 Gerar um token JWT para autenticação
+                    Key signingKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret));
+
                     String jwtToken = Jwts.builder()
                             .setSubject(email)
                             .setIssuedAt(new Date())
                             .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 1h de expiração
-                            .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
+                            .signWith(signingKey, SignatureAlgorithm.HS256)
                             .compact();
 
                     return "{\"token\": \"" + jwtToken + "\", \"message\": \"Login bem-sucedido!\"}";
