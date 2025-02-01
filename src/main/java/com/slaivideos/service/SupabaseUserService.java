@@ -2,12 +2,15 @@ package com.slaivideos.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import okhttp3.*;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +25,9 @@ public class SupabaseUserService {
 
     @Value("${supabase.key}")
     private String supabaseKey;
+
+    private final String JWT_SECRET = "chaveSecreta"; // 🔐 Definir uma chave segura para o JWT
+    private final long EXPIRATION_TIME = 3600000; // 1 hora em milissegundos
 
     public SupabaseUserService(OkHttpClient client) {
         this.client = client;
@@ -108,7 +114,15 @@ public class SupabaseUserService {
 
                 // 🔒 Comparação de senha segura
                 if (BCrypt.checkpw(senha, senhaCriptografada)) {
-                    return "Login bem-sucedido!";
+                    // 🔑 Gerar um token JWT para autenticação
+                    String jwtToken = Jwts.builder()
+                            .setSubject(email)
+                            .setIssuedAt(new Date())
+                            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 1h de expiração
+                            .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
+                            .compact();
+
+                    return "{\"token\": \"" + jwtToken + "\", \"message\": \"Login bem-sucedido!\"}";
                 } else {
                     return "Senha incorreta.";
                 }
