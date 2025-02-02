@@ -3,6 +3,7 @@ package com.slaivideos.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.slaivideos.dto.LoginResponseDTO;
+import com.slaivideos.dto.UserRequestDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -41,6 +41,7 @@ public class SupabaseUserService {
         this.client = client;
     }
 
+    // ✅ Método para LOGIN
     public ResponseEntity<?> loginUsuario(String email, String senha) {
         try {
             String queryUrl = supabaseUrl + "/rest/v1/usuarios?email=eq." + email + "&select=email,senha";
@@ -81,6 +82,38 @@ public class SupabaseUserService {
             }
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro de conexão: " + e.getMessage()));
+        }
+    }
+
+    // ✅ Método para CADASTRO
+    public ResponseEntity<?> criarUsuario(UserRequestDTO request) {
+        try {
+            String url = supabaseUrl + "/rest/v1/usuarios";
+            String senhaCriptografada = BCrypt.hashpw(request.getSenha(), BCrypt.gensalt());
+
+            String jsonBody = String.format(
+                    "{\"email\": \"%s\", \"senha\": \"%s\"}",
+                    request.getEmail(), senhaCriptografada
+            );
+
+            RequestBody body = RequestBody.create(jsonBody, MediaType.parse("application/json"));
+            Request requestHttp = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .addHeader("apikey", supabaseKey)
+                    .addHeader("Authorization", "Bearer " + supabaseKey)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Prefer", "return=minimal")
+                    .build();
+
+            try (Response response = client.newCall(requestHttp).execute()) {
+                if (!response.isSuccessful()) {
+                    return ResponseEntity.status(response.code()).body("Erro ao cadastrar usuário");
+                }
+                return ResponseEntity.ok("Usuário cadastrado com sucesso!");
+            }
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Erro ao conectar ao Supabase");
         }
     }
 }
