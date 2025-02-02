@@ -85,15 +85,16 @@ public class SupabaseUserService {
         }
     }
 
-    // ✅ Método para CADASTRO
+    // ✅ Método para CADASTRO corrigido
     public ResponseEntity<?> criarUsuario(UserRequestDTO request) {
         try {
             String url = supabaseUrl + "/rest/v1/usuarios";
             String senhaCriptografada = BCrypt.hashpw(request.getSenha(), BCrypt.gensalt());
 
+            // Incluindo nome no JSON
             String jsonBody = String.format(
-                    "{\"email\": \"%s\", \"senha\": \"%s\"}",
-                    request.getEmail(), senhaCriptografada
+                    "{\"nome\": \"%s\", \"email\": \"%s\", \"senha\": \"%s\"}",
+                    request.getNome(), request.getEmail(), senhaCriptografada
             );
 
             RequestBody body = RequestBody.create(jsonBody, MediaType.parse("application/json"));
@@ -108,12 +109,14 @@ public class SupabaseUserService {
 
             try (Response response = client.newCall(requestHttp).execute()) {
                 if (!response.isSuccessful()) {
-                    return ResponseEntity.status(response.code()).body("Erro ao cadastrar usuário");
+                    return ResponseEntity
+                            .status(response.code())
+                            .body(Map.of("error", "Erro ao cadastrar usuário: " + response.message()));
                 }
-                return ResponseEntity.ok("Usuário cadastrado com sucesso!");
+                return ResponseEntity.ok(Map.of("message", "Usuário cadastrado com sucesso!"));
             }
         } catch (IOException e) {
-            return ResponseEntity.status(500).body("Erro ao conectar ao Supabase");
+            return ResponseEntity.status(500).body(Map.of("error", "Erro ao conectar ao Supabase: " + e.getMessage()));
         }
     }
 }
