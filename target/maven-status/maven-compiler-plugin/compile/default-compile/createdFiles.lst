@@ -3,10 +3,11 @@ com\slaivideos\dto\UserRequestDTO.class
 com\slaivideos\config\AppConfig.class
 com\slaivideos\controller\ContactController.class
 com\slaivideos\config\SupabaseConfig.class
+com\slaivideos\controller\UserController.class
 com\slaivideos\service\ContactService.class
 com\slaivideos\config\CorsConfig.class
-com\slaivideos\controller\SupabaseTestController.class
 com\slaivideos\config\SupabaseClient.class
 com\slaivideos\service\SupabaseUserService.class
 com\slaivideos\model\ContactRequest.class
+com\slaivideos\dto\LoginResponseDTO.class
 com\slaivideos\SlaivideosBackendApplication.class

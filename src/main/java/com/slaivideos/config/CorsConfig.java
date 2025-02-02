@@ -11,8 +11,12 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*") // Agora aceita requisições de qualquer domínio
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Apenas os métodos necessários
+                .allowedOrigins(
+                        "https://smilelabsai.github.io",
+                        "https://slaivideos-backend-1.onrender.com",
+                        "https://rxqieqpxjztnelrsibqc.supabase.com"
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 🚀 Adicionando "OPTIONS"
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }

@@ -1,12 +1,13 @@
+C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\dto\LoginResponseDTO.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\service\ContactService.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\SlaivideosBackendApplication.java
+C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\UserController.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\dto\UserRequestDTO.java
-C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\SupabaseTestController.java
-C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\model\ContactRequest.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\AppConfig.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\service\SupabaseUserService.java
-C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\ContactController.java
-C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\SupabaseConfig.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\SupabaseClient.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\CorsConfig.java
+C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\model\ContactRequest.java
+C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\ContactController.java
+C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\config\SupabaseConfig.java
 C:\Users\pichau\slaivideos-backend\src\main\java\com\slaivideos\controller\HealthCheckController.java
