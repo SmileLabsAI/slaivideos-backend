@@ -2,13 +2,15 @@ package com.slaivideos.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.slaivideos.dto.LoginResponseDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.io.Decoders;
 import okhttp3.*;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -30,67 +32,17 @@ public class SupabaseUserService {
     @Value("${supabase.key}")
     private String supabaseKey;
 
-    @Value("${jwt.secret}")  // Pegando a chave do Render (Variáveis de Ambiente)
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
-    private final long EXPIRATION_TIME = 3600000; // 1 hora em milissegundos
+    private final long EXPIRATION_TIME = 3600000; // 1 hora
 
     public SupabaseUserService(OkHttpClient client) {
         this.client = client;
     }
 
-    public String listarUsuarios() {
-        Request request = new Request.Builder()
-                .url(supabaseUrl + "/rest/v1/usuarios?select=*")
-                .addHeader("apikey", supabaseKey)
-                .addHeader("Authorization", "Bearer " + supabaseKey)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                return "Erro ao buscar usuários: " + response.message();
-            }
-            return response.body() != null ? response.body().string() : "Nenhum usuário encontrado.";
-        } catch (IOException e) {
-            return "Erro de conexão: " + e.getMessage();
-        }
-    }
-
-    public String criarUsuario(String nome, String email, String senha) {
+    public ResponseEntity<?> loginUsuario(String email, String senha) {
         try {
-            // 🔒 Criptografando senha antes de salvar no banco
-            String senhaCriptografada = BCrypt.hashpw(senha, BCrypt.gensalt());
-
-            Map<String, String> userData = new HashMap<>();
-            userData.put("nome", nome);
-            userData.put("email", email);
-            userData.put("senha", senhaCriptografada);
-
-            String jsonBody = objectMapper.writeValueAsString(userData);
-
-            RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json"));
-            Request request = new Request.Builder()
-                    .url(supabaseUrl + "/rest/v1/usuarios")
-                    .post(body)
-                    .addHeader("apikey", supabaseKey)
-                    .addHeader("Authorization", "Bearer " + supabaseKey)
-                    .addHeader("Content-Type", "application/json")
-                    .build();
-
-            try (Response response = client.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    return "Erro ao criar usuário: " + response.message();
-                }
-                return "Usuário criado com sucesso!";
-            }
-        } catch (IOException e) {
-            return "Erro ao processar a requisição: " + e.getMessage();
-        }
-    }
-
-    public String loginUsuario(String email, String senha) {
-        try {
-            // 🔍 Buscar usuário pelo e-mail no Supabase
             String queryUrl = supabaseUrl + "/rest/v1/usuarios?email=eq." + email + "&select=email,senha";
             Request request = new Request.Builder()
                     .url(queryUrl)
@@ -101,42 +53,34 @@ public class SupabaseUserService {
 
             try (Response response = client.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
-                    return "Erro ao buscar usuário: " + response.message();
+                    return ResponseEntity.status(response.code()).body(Map.of("error", "Erro ao buscar usuário: " + response.message()));
                 }
 
-                String responseBody = response.body() != null ? response.body().string() : "";
+                String responseBody = response.body().string();
                 if (responseBody.isEmpty() || responseBody.equals("[]")) {
-                    return "Usuário não encontrado.";
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Usuário não encontrado."));
                 }
 
-                // 🔍 Validando resposta JSON do Supabase
                 JsonNode rootNode = objectMapper.readTree(responseBody);
-                if (!rootNode.isArray() || rootNode.size() == 0) {
-                    return "Usuário não encontrado.";
-                }
-
-                // 🔑 Pegando a senha criptografada do primeiro usuário encontrado
                 String senhaCriptografada = rootNode.get(0).get("senha").asText();
 
-                // 🔒 Comparação de senha segura
                 if (BCrypt.checkpw(senha, senhaCriptografada)) {
-                    // 🔑 Gerar um token JWT para autenticação
                     Key signingKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret));
 
                     String jwtToken = Jwts.builder()
                             .setSubject(email)
                             .setIssuedAt(new Date())
-                            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 1h de expiração
+                            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                             .signWith(signingKey, SignatureAlgorithm.HS256)
                             .compact();
 
-                    return "{\"token\": \"" + jwtToken + "\", \"message\": \"Login bem-sucedido!\"}";
+                    return ResponseEntity.ok(new LoginResponseDTO(jwtToken, "Login bem-sucedido!"));
                 } else {
-                    return "Senha incorreta.";
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Senha incorreta."));
                 }
             }
         } catch (IOException e) {
-            return "Erro de conexão: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erro de conexão: " + e.getMessage()));
         }
     }
 }
