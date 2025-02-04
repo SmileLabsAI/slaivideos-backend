@@ -14,7 +14,8 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "https://smilelabsai.github.io",
                         "https://slaivideos-backend-1.onrender.com",
-                        "https://rxqieqpxjztnelrsibqc.supabase.com"
+                        "https://rxqieqpxjztnelrsibqc.supabase.com",
+                        "https://slaivideos.shop"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 🚀 Adicionando "OPTIONS"
                 .allowedHeaders("*")
